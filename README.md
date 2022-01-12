@@ -40,19 +40,19 @@ adb的安装非常简单，总共两种途径，一种是下载abd的压缩包�
 > adb连接
 
 如下图
-![连接示意图](/connect.jpg)
+![连接示意图](img/connect.jpg)
 
 ### 导入脚本
 
 导入相对应脚本，选择 *.air或*.py 即可。
-![导入脚本](/import_script.jpg)
+![导入脚本](img/import_script.jpg)
 
 ### 修改参数
 
 修改<font color= #00FFFF>min_support</font>(数据采集条件)，<font color= #00FFFF>export_path</font>(数据存储地址)、<font color= #00FFFF>search_text</font>(搜索关键词)
-![修改参数](/changed_param.jpg)
+![修改参数](img/changed_param.jpg)
 
 ### 运行脚本
 
 点击运行即可
-![运行脚本](/run_script.jpg)
+![运行脚本](img/run_script.jpg)

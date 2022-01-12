@@ -45,11 +45,13 @@ adb的安装非常简单，总共两种途径，一种是下载abd的压缩包�
 ### 导入脚本
 
 导入相对应脚本，选择 *.air或*.py 即可。
+如下图
 ![导入脚本](https://s2.loli.net/2022/01/12/BplS5FetTPhikmg.jpg)
 
 ### 修改参数
 
 修改<font color= #00FFFF>min_support</font>(数据采集条件)，<font color= #00FFFF>export_path</font>(数据存储地址)、<font color= #00FFFF>search_text</font>(搜索关键词)
+如下图
 ![修改参数](https://s2.loli.net/2022/01/12/z4xespiFmXHVLkM.jpg)
 
 ### 运行脚本

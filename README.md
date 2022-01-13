@@ -15,12 +15,12 @@
 ### 脚本使用的前置条件
 
 > 安装adb
-> > 安装Python
-> > 安装airtest
+> 安装Python
+> 安装airtest
 
 #### 安装adb
 
-adb的安装非常简单，总共两种途径，一种是下载abd的压缩包解压即可，另一种是直接安装Android Studio。
+adb的安装非常简单，总共两种途径，一种是下载abd的压缩包解压即可([教程如下](https://gitee.com/ly.cn/auto_script/blob/master/adb/adb%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.md))，另一种是直接安装Android Studio。
 
 #### 安装Python
 

@@ -32,6 +32,11 @@ adb的安装非常简单，总共两种途径，一种是下载abd的压缩包�
 
 ## 开始使用
 
+### 手机设定
+
+>手机开启开发者选项
+>开启USB调试
+
 ### 设备连接
 
 > 掏出手机
@@ -52,7 +57,7 @@ adb的安装非常简单，总共两种途径，一种是下载abd的压缩包�
 
 修改<font color= #00FFFF>min_support</font>(数据采集条件)，<font color= #00FFFF>export_path</font>(数据存储地址)、<font color= #00FFFF>search_text</font>(搜索关键词)
 如下图
-![修改参数](https://s2.loli.net/2022/01/12/z4xespiFmXHVLkM.jpg)
+![修改参数](https://s2.loli.net/2022/01/15/Ke2vEsa85dW1GMl.jpg)
 
 ### 运行脚本
 

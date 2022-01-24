@@ -1,6 +1,8 @@
 # -*- encoding=utf8 -*-
+from poco.drivers.android.uiautomation import AndroidUiautomationPoco
 __author__ = "panghu"
 
+from math import fabs
 from operator import index
 from pickle import TRUE
 # from tkinter.messagebox import NO
@@ -13,8 +15,9 @@ from airtest.aircv import *
 auto_setup(__file__)
 
 
-from poco.drivers.android.uiautomation import AndroidUiautomationPoco
-poco = AndroidUiautomationPoco(use_airtest_input=True, screenshot_each_action=False)
+poco = AndroidUiautomationPoco(
+    use_airtest_input=True, screenshot_each_action=False)
+
 
 class XHSScirpt:
     min_support = 100
@@ -34,7 +37,7 @@ class XHSScirpt:
         else:
             self.oblique = '/'
 
-    def save_img(self,img_path, img_element):
+    def save_img(self, img_path, img_element):
         width, height = device().get_current_resolution()
         position_x, position_y = img_element.get_position()
         size_width, size_height = img_element.attr('size')
@@ -48,7 +51,8 @@ class XHSScirpt:
         screen = aircv.crop_image(
             screen, [img_x, img_y, img_size_width, img_size_height + img_y])
         pli_img = cv2_2_pil(screen)
-        temp_path = r'{}{}{}.png'.format(self.export_path, self.oblique, img_path)
+        temp_path = r'{}{}{}.png'.format(
+            self.export_path, self.oblique, img_path)
         pli_img.save(temp_path, quality=90, optimize=True)
 
     # 启动App
@@ -78,24 +82,39 @@ class XHSScirpt:
         except:
             print('寻找首页搜索按钮失败')
             return False
-        top_item = get_child(poco("androidx.drawerlayout.widget.DrawerLayout"), [0 for _ in range(7)])
-        if top_item:
-            search_item = top_item.child(
-                typeMatches="android.widget.ImageView")
-            if search_item:
-                search_item.click()
-                return True
-            else:
-                print('寻找首页搜索按钮失败')
-            return False
-        else:
+        top_item = home_item.child()[0]
+        if top_item == None:
             print('寻找首页搜索按钮失败')
             return False
+        top_index = 0
+        result = False
+        while not result and top_index != 12:
+            temp_result = self.check_child(2, top_item)
+            top_item = top_item.child()[0]
+            if top_item == None:
+                print('寻找首页搜索按钮失败')
+                return False
+            if temp_result:
+                result = self.check_child(3, top_item)
+            top_index += 1
+        search_item = None
+        for item in top_item.children():
+            if item.attr('type') == 'android.widget.ImageView':
+                search_item = item
+        if search_item == None:
+            print('寻找首页搜索按钮失败')
+            return False
+        search_item.click()
+        return True
 
-    # 检测搜索页面并搜索      
+    def check_child(self, need_count, element_item):
+        return element_item.children().__len__() == need_count
+
+    # 检测搜索页面并搜索
     def find_search_input(self):
         try:
-            item_list = poco(typeMatches="android.widget.TextView", textMatches="搜索")
+            item_list = poco(
+                typeMatches="android.widget.TextView", textMatches="搜索")
             item_list.wait_for_appearance()
         except:
             print('进入搜索页面失败')
@@ -106,8 +125,9 @@ class XHSScirpt:
         if not search_btn:
             print('获取搜索按钮失败')
             return False
-        
-        input_item = search_btn.parent().child(typeMatches='android.widget.FrameLayout').child(typeMatches='android.widget.EditText')
+
+        input_item = search_btn.parent().child(typeMatches='android.widget.FrameLayout').child(
+            typeMatches='android.widget.EditText')
         if input_item:
             input_item.set_text(self.search_text)
             sleep(1)
@@ -116,9 +136,10 @@ class XHSScirpt:
 
             in_page = False
             index = 0
-            while (not in_page) or index > 120: 
+            while (not in_page) or index > 120:
                 try:
-                    pic_btn = poco(typeMatches="android.widget.TextView", textMatches="图文")
+                    pic_btn = poco(
+                        typeMatches="android.widget.TextView", textMatches="图文")
                     pic_btn.wait_for_appearance(timeout=5)
                     if pic_btn.parent().child(typeMatches='android.widget.ImageView'):
                         in_page = True
@@ -131,7 +152,7 @@ class XHSScirpt:
             if not in_page:
                 print('搜索失败')
                 return False
-                
+
             return True
         else:
             print('获取输入框失败')
@@ -139,7 +160,7 @@ class XHSScirpt:
 
     # 获取列表数据
     def get_search_list(self):
-        
+
         try:
             page_item = poco(type='androidx.viewpager.widget.ViewPager')
             page_item.wait_for_appearance()
@@ -148,10 +169,11 @@ class XHSScirpt:
         except:
             print('搜索失败')
             return
-        
+
         for note_item in note_list_item:
             try:
-                support_item = note_item.child(type='android.widget.RelativeLayout').child(type='android.widget.FrameLayout')
+                support_item = note_item.child(type='android.widget.RelativeLayout').child(
+                    type='android.widget.FrameLayout')
             except:
                 print('无效item')
                 continue
@@ -160,8 +182,9 @@ class XHSScirpt:
                     support_text = support_item.child(
                         type='android.widget.TextView').get_text()
                     if "万" in support_text:
-                        support_number = float(support_text.replace('万', "")) * 10000
-                    else:   
+                        support_number = float(
+                            support_text.replace('万', "")) * 10000
+                    else:
                         support_number = int(support_text)
                     if support_number > self.min_support:
                         note_item.click()
@@ -176,7 +199,8 @@ class XHSScirpt:
                                 f.write('{}\n'.format(note_data['title']))
                                 f.close()
 
-                            print('采集到一篇图文笔记，现存:{}篇笔记'.format(len(self.content_list)))
+                            print('采集到一篇图文笔记，现存:{}篇笔记'.format(
+                                len(self.content_list)))
 
     # 获取笔记详情
     def get_note_detail(self):
@@ -184,7 +208,8 @@ class XHSScirpt:
             'type': '图文'
         }
         try:
-            content_page_item = poco(name='com.xingin.xhs:id/noteContentLayout')
+            content_page_item = poco(
+                name='com.xingin.xhs:id/noteContentLayout')
             content_page_item.wait_for_appearance(timeout=10)
         except:
             print('页面参数获取失败')
@@ -202,8 +227,6 @@ class XHSScirpt:
                 total_number = 1
         except:
             total_number = 1
-
-        
 
         try:
             string_item_list = poco(name='com.xingin.xhs:id/noteContentLayout').child(
@@ -225,7 +248,8 @@ class XHSScirpt:
             print('笔记:{}已在本地,无需重新采集'.format(note_dict.get('title')))
             return None
         try:
-            img_element = poco(name='com.xingin.xhs:id/noteContentLayout').child(typeMatches='android.widget.FrameLayout').child(typeMatches='androidx.recyclerview.widget.RecyclerView')
+            img_element = poco(name='com.xingin.xhs:id/noteContentLayout').child(
+                typeMatches='android.widget.FrameLayout').child(typeMatches='androidx.recyclerview.widget.RecyclerView')
         except:
             print('图片获取失败')
 
@@ -245,11 +269,12 @@ class XHSScirpt:
             else:
                 self.save_img('{}{}1'.format(
                     note_dict['title'], self.oblique), img_element)
-        
+
         page_item = content_page_item.parent().parent().parent().parent()
         if page_item:
             try:
-                bottom_item_list = page_item.child(type='android.widget.FrameLayout').child(type='android.view.ViewGroup').child(type='android.view.ViewGroup').child(type='android.widget.LinearLayout').child(type='android.widget.TextView')
+                bottom_item_list = page_item.child(type='android.widget.FrameLayout').child(type='android.view.ViewGroup').child(
+                    type='android.view.ViewGroup').child(type='android.widget.LinearLayout').child(type='android.widget.TextView')
             except:
                 print('底部参数获取失败')
 
@@ -283,7 +308,8 @@ class XHSScirpt:
             f.write('标题:  {}\n'.format(note_dict['title']))
             f.write('作者:  {}\n'.format(note_dict['author']))
             f.write('类型:  {}'.format(note_dict['type']))
-            f.write('点赞:{}  收藏:{}  评论:{}\n'.format(note_dict['support'], note_dict['collect'], note_dict['comment']))
+            f.write('点赞:{}  收藏:{}  评论:{}\n'.format(
+                note_dict['support'], note_dict['collect'], note_dict['comment']))
             f.write('内容:\n{}'.format(note_dict['desc']))
             f.close()
 
@@ -292,7 +318,7 @@ class XHSScirpt:
     # 滚动一下
     def to_next(self):
         sleep(0.5)
-        poco.swipe([0.5, 0.9],[0.5,0.1], duration=0.25)
+        poco.swipe([0.5, 0.9], [0.5, 0.1], duration=0.25)
         sleep(1)
         self.get_search_list()
 
@@ -310,23 +336,8 @@ class XHSScirpt:
         self.start_scroll()
 
 
-
-script = XHSScirpt(min_support=100, search_text='python', export_path=r'/Users/liangyi/Downloads/xhs_data')
+script = XHSScirpt(min_support=100, search_text='python',
+                   export_path=r'/Users/liangyi/Downloads/xhs_data')
 
 script.open_app()
 script.start_search()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
